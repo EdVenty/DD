@@ -1,0 +1,9 @@
+.news-card-grid{
+    display: flex;
+    /* flex-wrap: wrap;
+    justify-content: space-evenly; */
+    overflow-x: scroll;
+}
+::-webkit-scrollbar {
+    display: none;
+}
