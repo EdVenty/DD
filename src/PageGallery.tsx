@@ -1,6 +1,4 @@
 import React from "react"
-import NewsCard from "./NewsCard";
-import NewsCardGrid from "./NewsCardGrid";
 import { Box, Grid, ImageList, Rating, Typography } from '@mui/material';
 import ImageListed from './ImageListed';
 

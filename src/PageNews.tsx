@@ -1,9 +1,19 @@
-import React from "react"
-import NewsCard from "./NewsCard";
+import React, {useState, useEffect} from "react"
+import {NewsCard} from "./NewsCard";
 import NewsCardGrid from "./NewsCardGrid";
-import { Box, Grid, ImageList, Rating, Typography } from '@mui/material';
+import { Box, Grid, ImageList, Rating, Skeleton, Typography } from '@mui/material';
+import { getNews, NewsFirestore } from "./fire";
 
 const News = ({...props}) => {
+    const [news, setNews] = useState<NewsFirestore[]>([]);
+    useEffect(() => {
+        if(news.length === 0)
+            getNews()
+                .then((newsRaw) => {
+                    console.log(newsRaw);
+                    setNews(newsRaw);
+                });
+    });
     return <React.Fragment>
         <Box sx={{
             color: '#fff',
@@ -13,20 +23,20 @@ const News = ({...props}) => {
             <Typography variant='h3'>
                 Новости Дороги Добра
             </Typography>
-            <Grid container spacing={2}>
-            <Grid item xs={8}>
-                <NewsCard/>
-            </Grid>
-            <Grid item xs={4}>
-                <NewsCard/>
-            </Grid>
-            <Grid item xs={4}>
-                <NewsCard/>
-            </Grid>
-            <Grid item xs={8}>
-                <NewsCard/>
-            </Grid>
-            </Grid>
+            {news.length > 0 ? 
+            <div className="news-grid">
+                {news.map((newsOne) => 
+                    <NewsCard content={newsOne.content} media={newsOne.headerImage} timestamp={'Опубликовано ' + newsOne.timestamp?.toDate().toLocaleDateString()} title={newsOne.title} newsId={newsOne.newsId}/>)
+                }
+            </div>
+            :
+            <div className="news-grid">
+                <Skeleton variant="rectangular" width={275} height={433}/>
+                <Skeleton variant="rectangular" width={275} height={433}/>
+                <Skeleton variant="rectangular" width={275} height={433}/>
+            </div>
+            }
+            
         </Box>
     </React.Fragment>
 }

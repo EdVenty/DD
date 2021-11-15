@@ -5,7 +5,6 @@ import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
 import React from 'react';
 import { Box, ImageList, Rating, Typography } from '@mui/material';
-import NewsCard from './NewsCard';
 import NavBar from './NavBar';
 import { Link, Route, Routes } from "react-router-dom";
 import Main from './PageMain';
@@ -20,10 +19,10 @@ function App() {
       <NavBar setDrawerWidthCallback={setDrawerWidth}/>
       <Box sx={{display: 'flex', marginTop: '2rem', marginLeft: drawerWidth, transition: 'margin-left 0.3s'}}>
         <Routes>
-          <Route path="/" element={<Main/>}/>
-          <Route path="/news" element={<News/>}/>
-          <Route path="/gallery" element={<Gallery/>}/>
-          <Route path="/account" element={<Account/>}/>
+          <Route path="/DD" element={<Main/>}/>
+          <Route path="/DD/news" element={<News/>}/>
+          <Route path="/DD/gallery" element={<Gallery/>}/>
+          <Route path="/DD/account" element={<Account/>}/>
         </Routes>
       </Box>
       {/* <ImageList>

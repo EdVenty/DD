@@ -1,6 +1,6 @@
-import { AppBar, Button, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Stack, SwipeableDrawer, Toolbar, Typography , Avatar} from "@mui/material";
+import { AppBar, Button, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Stack, SwipeableDrawer, Toolbar, Typography , Avatar, Skeleton} from "@mui/material";
 import { Box } from "@mui/system";
-import React from "react";
+import React, {useEffect} from "react";
 import MenuIcon from '@mui/icons-material/Menu';
 import Account from '@mui/icons-material/AccountCircle';
 import { styled } from '@mui/styles';
@@ -10,8 +10,9 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import {NavigateFunction, useNavigate, useLocation, Location} from 'react-router-dom';
 import Divider from '@mui/material/Divider';
-import { AuthContext } from './fire';
+import { AuthContext, getUserInFirestore, UserFirestore } from './fire';
 import { logIn, logOut } from './PageAccount';
+import { onAuthStateChanged, User } from "@firebase/auth";
 
 
 interface IProps{
@@ -23,7 +24,9 @@ interface IState{
     accountMenuOpen: boolean,
     accountCircleAnchor: null | HTMLElement,
     drawerOpen: boolean,
-    drawerWidthPx: number
+    drawerWidthPx: number,
+    userFirestoreLoaded: boolean,
+    userFirestore?: UserFirestore
 };
 const MyAppBar = styled(AppBar)({
     backgroundColor: '#fff',
@@ -33,13 +36,13 @@ const MyAppBar = styled(AppBar)({
 
 function getLocName(path: string){
     switch(path){
-        case "/":
+        case "/DD":
             return "Главная";
-        case '/news':
+        case '/DD/news':
             return 'Новости';
-        case '/gallery':
+        case '/DD/gallery':
             return "Галерея"
-        case '/account':
+        case '/DD/account':
             return 'Аккаунт';
     }
 }
@@ -52,7 +55,8 @@ class NavBar extends React.PureComponent<IProps, IState>{
             accountMenuOpen: false,
             drawerOpen: false,
             accountCircleAnchor: null,
-            drawerWidthPx: 55
+            drawerWidthPx: 55,
+            userFirestoreLoaded: false
         }
         this.handleAccountClick = this.handleAccountClick.bind(this);
         this.handleAccountClose = this.handleAccountClose.bind(this);
@@ -75,6 +79,20 @@ class NavBar extends React.PureComponent<IProps, IState>{
         this.setState({
             accountCircleAnchor: null,
             accountMenuOpen: false
+        });
+    }
+    componentDidMount(){
+        onAuthStateChanged(this.context.auth, (user: User | null) => {
+            if(user){
+                getUserInFirestore(user)
+                    .then(value => {
+                        console.log('sus');
+                        this.setState({
+                            userFirestore: value.userFirestore,
+                            userFirestoreLoaded: true
+                        })
+                    });
+            }
         });
     }
     render(){
@@ -111,19 +129,19 @@ class NavBar extends React.PureComponent<IProps, IState>{
                 }}
             >
                 <List>
-                    <ListItem button onClick={() => this.props.navigate!('/')}>
+                    <ListItem button onClick={() => this.props.navigate!('/DD')}>
                         <ListItemIcon>
                             <StarIcon />
                         </ListItemIcon>
                         <ListItemText primary={'Главная'} />
                     </ListItem>
-                    <ListItem button onClick={() => this.props.navigate!('/news')}>
+                    <ListItem button onClick={() => this.props.navigate!('/DD/news')}>
                         <ListItemIcon>
                             <ReceiptIcon />
                         </ListItemIcon>
                         <ListItemText primary={'Новости'} />
                     </ListItem>
-                    <ListItem button onClick={() => this.props.navigate!('/gallery')}>
+                    <ListItem button onClick={() => this.props.navigate!('/DD/gallery')}>
                         <ListItemIcon>
                             <PhotoAlbumIcon />
                         </ListItemIcon>
@@ -137,28 +155,29 @@ class NavBar extends React.PureComponent<IProps, IState>{
                             }}/>
                         </ListItemIcon>
                     </ListItem>
-                    <ListItem sx={{
-                        position: 'fixed',
-                        bottom: '0px'
-                    }}>
-                        {/* {this.context.auth.currentUser !== null ? 
-                        <Avatar src={this.context.auth.currentUser?.photoURL} onClick={this.handleAccountClick}
-                            sx={{
-                                padding: '0px'
-                            }}
-                        />
-                        : */}
-                        <IconButton 
-                            sx={{
-                                padding: '0px'
-                            }}
-                            onClick={this.handleAccountClick}>
-                            <Account/>
-                        </IconButton>
-                        {/* } */}
-                        
+                </List>
+                <List sx={{marginTop: 'auto'}}>
+                    <ListItem>
+                        <Stack direction='row' spacing='20px'>
+                            <IconButton 
+                                sx={{
+                                    padding: '0px'
+                                }}
+                                onClick={this.handleAccountClick}>
+                                <Account/>
+                            </IconButton>
+                            {this.context.auth.currentUser !== null ? 
+                                (this.state.userFirestoreLoaded ? <Typography sx={{whiteSpace: 'nowrap'}}>{this.state.userFirestore!.displayName}</Typography> : <Skeleton variant="text" />)
+                            :
+                            <Button variant="contained" onClick={() => {
+                                this.handleAccountClose();
+                                this.props.navigate!("/DD/account");
+                            }}>
+                                Войти
+                            </Button>}
+                        </Stack>
                     </ListItem>
-                    
+                </List>  
                 <Menu
                     id="basic-menu"
                     open={this.state.accountMenuOpen}
@@ -170,7 +189,7 @@ class NavBar extends React.PureComponent<IProps, IState>{
                 >
                     <MenuItem onClick={() => {
                         this.handleAccountClose();
-                        this.props.navigate!("/account");
+                        this.props.navigate!("/DD/account");
                     }}>Ваш аккаунт</MenuItem>
                     {this.context.auth.currentUser !== null ? 
                     <React.Fragment>
@@ -182,13 +201,12 @@ class NavBar extends React.PureComponent<IProps, IState>{
                     :
                     <React.Fragment>
                         <MenuItem onClick={() => {
-                            logIn(this.context.auth, this.context.provider);
                             this.handleAccountClose();
+                            this.props.navigate!("/DD/account");
                         }}>Войти</MenuItem>
                     </React.Fragment>
                     }
                 </Menu>
-                </List>
             </SwipeableDrawer>
         </Box>;
     }
