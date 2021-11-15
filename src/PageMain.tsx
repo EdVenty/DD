@@ -1,7 +1,6 @@
 import React from "react"
-import {NewsCard} from "./NewsCard";
 import NewsCardGrid from "./NewsCardGrid";
-import { Box, Button, ImageList, Rating, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 
 const Main = ({...props}) => {

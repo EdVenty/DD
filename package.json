@@ -54,6 +54,7 @@
     "firebase": "^9.4.1",
     "gh-pages": "^3.2.3",
     "lodash-webpack-plugin": "^0.11.6",
+    "react-create-global-state": "^1.0.0",
     "react-router-dom": "^6.0.2",
     "webpack": "^4.44.2"
   }

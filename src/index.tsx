@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AuthContext, auth, provider, db} from './fire';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { GlobalAuthNeededProvider } from './useAuthNeededProvider';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -12,7 +13,9 @@ ReactDOM.render(
       auth, provider, db
     }}>
       <Router>
-        <App />
+        <GlobalAuthNeededProvider>
+          <App />
+        </GlobalAuthNeededProvider>
       </Router>
     </AuthContext.Provider>
   </React.StrictMode>,

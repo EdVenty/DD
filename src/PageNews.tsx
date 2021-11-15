@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react"
 import {NewsCard} from "./NewsCard";
-import NewsCardGrid from "./NewsCardGrid";
-import { Box, Grid, ImageList, Rating, Skeleton, Typography } from '@mui/material';
+import { Box, Skeleton, Typography } from '@mui/material';
 import { getNews, NewsFirestore } from "./fire";
 
 const News = ({...props}) => {
@@ -26,7 +25,7 @@ const News = ({...props}) => {
             {news.length > 0 ? 
             <div className="news-grid">
                 {news.map((newsOne) => 
-                    <NewsCard content={newsOne.content} media={newsOne.headerImage} timestamp={'Опубликовано ' + newsOne.timestamp?.toDate().toLocaleDateString()} title={newsOne.title} newsId={newsOne.newsId}/>)
+                    <NewsCard content={newsOne.content} media={newsOne.headerImage} timestamp={'Опубликовано ' + newsOne.timestamp?.toDate().toLocaleDateString()} title={newsOne.title} newsId={newsOne.newsId} key={newsOne.newsId!}/>)
                 }
             </div>
             :

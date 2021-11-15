@@ -11,12 +11,14 @@ import Main from './PageMain';
 import News from './PageNews';
 import Gallery from './PageGallery';
 import Account from './PageAccount';
+import { AuthNeededDialog } from './AuthNeededDialog';
 
 function App() {
   const [drawerWidth, setDrawerWidth] = React.useState('55px');
   return (
     <div className="App">
       <NavBar setDrawerWidthCallback={setDrawerWidth}/>
+      <AuthNeededDialog/>
       <Box sx={{display: 'flex', marginTop: '2rem', marginLeft: drawerWidth, transition: 'margin-left 0.3s'}}>
         <Routes>
           <Route path="/DD" element={<Main/>}/>

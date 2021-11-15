@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Avatar, Box, Button, Card, CardActions, CardContent, CardHeader, CardMedia, Checkbox, IconButton, Rating, Skeleton, Typography } from '@mui/material';
-import ReadMoreIcon from '@mui/icons-material/ReadMore';
+import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Checkbox, Skeleton, Typography } from '@mui/material';
 import { FavoriteBorder, Favorite } from "@mui/icons-material";
 import { addLikeToNews, AuthContext, getLikesFromNews, removeLikeFromNews } from "./fire";
+import useGlobalAuthNeeded from "./useAuthNeededProvider";
 
 interface ICardProps{
     title?: string,
@@ -12,23 +12,29 @@ interface ICardProps{
     newsId?: string
 }
 export const NewsCard = ({title, media, content, timestamp, newsId, ...props}: ICardProps) => {
-    const { auth, provider } = useContext(AuthContext); 
+    const { auth } = useContext(AuthContext); 
     const [ likesLoaded, setLikesLoaded ] = useState(false);
     const [ likeGot, setLikeGot ] = useState(false);
+    const [ authNeeded, setAuthNeeded ] = useGlobalAuthNeeded();
     useEffect(() => {
-        if(!likesLoaded && auth.currentUser){
-            getLikesFromNews(auth.currentUser!, newsId!)
-                .then((value) => {
-                    for(let like of value){
-                        console.log(like);
-                        if(like.uid === auth.currentUser!.uid){
-                            setLikeGot(true);
-                            console.log("Like found");
-                            break;
+        if(!likesLoaded){
+            if(auth.currentUser){
+                getLikesFromNews(auth.currentUser!, newsId!)
+                    .then((value) => {
+                        for(let like of value){
+                            console.log(like);
+                            if(like.uid === auth.currentUser!.uid){
+                                setLikeGot(true);
+                                console.log(`User has like on post #${newsId}`);
+                                break;
+                            }
                         }
-                    }
-                });
+                        setLikesLoaded(true);
+                    });
+            }
+            else{
                 setLikesLoaded(true);
+            }
         }
     }, [setLikesLoaded, setLikeGot, auth, likesLoaded, newsId]);
     return <Card sx={{ minWidth: 150 }}>
@@ -52,6 +58,7 @@ export const NewsCard = ({title, media, content, timestamp, newsId, ...props}: I
             </CardContent>
             <CardActions>
                 {likesLoaded ?
+                <React.Fragment>
                 <Checkbox
                     icon={<FavoriteBorder/>}
                     checkedIcon={<Favorite/>}
@@ -62,21 +69,27 @@ export const NewsCard = ({title, media, content, timestamp, newsId, ...props}: I
                             if(!likeGot){
                                 setLikeGot(true);
                                 addLikeToNews(auth.currentUser!, newsId!);
+                                console.log(`Like added to news #${newsId}`);
                             }
                             else{
                                 setLikeGot(false);
                                 removeLikeFromNews(auth.currentUser!, newsId!);
+                                console.log(`Like removed from news #${newsId}`);
                             }
+                        }
+                        else{
+                            setAuthNeeded(true);
                         }
                     }}  
                 />
+                <Button size="small" sx={{marginLeft: 'auto'}}>Читать далее</Button>
+                </React.Fragment>
                 :
-                <Skeleton variant='rectangular' width={50} height={50}/>
+                <Skeleton variant='rectangular' width={200} height={20}/>
                 }
                 {/* <IconButton sx={{marginLeft: 'auto'}}>
                     <ReadMoreIcon/>
                 </IconButton> */}
-                <Button size="small" sx={{marginLeft: 'auto'}}>Читать далее</Button>
             </CardActions>
         </Card>
 }

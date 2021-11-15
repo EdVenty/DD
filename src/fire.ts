@@ -11,13 +11,13 @@ import React from "react";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBlqB_0nI-CGH1UI23XeveLabHwiMDXX5c",
-  authDomain: "dorogadobra-85fd2.firebaseapp.com",
-  projectId: "dorogadobra-85fd2",
-  storageBucket: "dorogadobra-85fd2.appspot.com",
-  messagingSenderId: "888417216434",
-  appId: "1:888417216434:web:57d27244768edbeea6e6ab",
-  measurementId: "G-5XSCSWLNVY"
+  apiKey: "AIzaSyDEkMmRttZeYHc6agXVRTjfFr2KLQI2XsA",
+  authDomain: "dd-asia.firebaseapp.com",
+  projectId: "dd-asia",
+  storageBucket: "dd-asia.appspot.com",
+  messagingSenderId: "256048594049",
+  appId: "1:256048594049:web:ada7a2bda342777439a180",
+  measurementId: "G-SL6D3XB4PB"
 };
 
 export interface UserFirestore{

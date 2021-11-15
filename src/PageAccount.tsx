@@ -1,8 +1,7 @@
 import React, { useContext, useState } from "react"
-import { Box, Button, ImageList, Rating, Typography, Skeleton, Avatar, Stack, TextField, Snackbar, Alert } from '@mui/material';
-import { useNavigate } from "react-router-dom";
+import { Box, Button, Typography, Skeleton, Avatar, Stack, TextField, Snackbar, Alert } from '@mui/material';
 import { AuthContext, getUserInFirestore, onUserInFirestoreUpdate, setUserInFirestore, UserFirestore } from "./fire";
-import { onAuthStateChanged, User, browserLocalPersistence, setPersistence, signInWithPopup, GoogleAuthProvider, signOut } from "@firebase/auth";
+import { onAuthStateChanged, User, browserLocalPersistence, setPersistence, signInWithPopup, signOut } from "@firebase/auth";
 import { Unsubscribe } from "firebase/firestore";
 
 export const logIn = (auth: any, provider: any) => {
@@ -10,16 +9,12 @@ export const logIn = (auth: any, provider: any) => {
     .then(() => {
         signInWithPopup(auth, provider)
         .then((result) => {
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential!.accessToken;
-            const user = result.user;
+            console.log("User loggined in.");
         }).catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
             console.log(errorCode);
             console.log(errorMessage);
-            const email = error.email;
-            const credential = GoogleAuthProvider.credentialFromError(error);
         });
     })
 }
@@ -31,8 +26,8 @@ export const logOut = (auth: any) => {
 }
 
 const AuthorizedLoaded = ({userFirestore, ...props}: {userFirestore?: UserFirestore}) => {
-    const { auth, provider } = useContext(AuthContext);
-    const [user, setUser] = useState(userFirestore!);
+    const { auth } = useContext(AuthContext);
+    const [user] = useState(userFirestore!);
     const [snackOpen, setOpenSnack] = useState(false);
     return <React.Fragment>
         <Box sx={{
@@ -105,7 +100,7 @@ const NotAuthorized = ({...props}) => {
     </React.Fragment>
 }
 const Account = ({...props}) => {
-    const { auth, provider } = useContext(AuthContext); 
+    const { auth } = useContext(AuthContext); 
     const [user, setUser] = useState(auth.currentUser);
     const [userFirestore, setUserFirestore] = useState<UserFirestore | undefined>({});
     const [userFirestoreLoaded, setUserFirestoreLoaded] = useState(false);

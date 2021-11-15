@@ -1,7 +1,6 @@
-import { AppBar, Button, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Stack, SwipeableDrawer, Toolbar, Typography , Avatar, Skeleton} from "@mui/material";
+import { AppBar, Button, IconButton, List, ListItem, ListItemIcon, ListItemText, Menu, MenuItem, Stack, SwipeableDrawer, Toolbar, Typography , Skeleton} from "@mui/material";
 import { Box } from "@mui/system";
-import React, {useEffect} from "react";
-import MenuIcon from '@mui/icons-material/Menu';
+import React from "react";
 import Account from '@mui/icons-material/AccountCircle';
 import { styled } from '@mui/styles';
 import StarIcon from '@mui/icons-material/Star';
@@ -11,7 +10,7 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import {NavigateFunction, useNavigate, useLocation, Location} from 'react-router-dom';
 import Divider from '@mui/material/Divider';
 import { AuthContext, getUserInFirestore, UserFirestore } from './fire';
-import { logIn, logOut } from './PageAccount';
+import { logOut } from './PageAccount';
 import { onAuthStateChanged, User } from "@firebase/auth";
 
 
@@ -86,7 +85,6 @@ class NavBar extends React.PureComponent<IProps, IState>{
             if(user){
                 getUserInFirestore(user)
                     .then(value => {
-                        console.log('sus');
                         this.setState({
                             userFirestore: value.userFirestore,
                             userFirestoreLoaded: true
@@ -192,19 +190,15 @@ class NavBar extends React.PureComponent<IProps, IState>{
                         this.props.navigate!("/DD/account");
                     }}>Ваш аккаунт</MenuItem>
                     {this.context.auth.currentUser !== null ? 
-                    <React.Fragment>
                         <MenuItem onClick={() => {
                             logOut(this.context.auth);
                             this.handleAccountClose();
                         }}>Выйти</MenuItem>
-                    </React.Fragment>
                     :
-                    <React.Fragment>
                         <MenuItem onClick={() => {
                             this.handleAccountClose();
                             this.props.navigate!("/DD/account");
                         }}>Войти</MenuItem>
-                    </React.Fragment>
                     }
                 </Menu>
             </SwipeableDrawer>
